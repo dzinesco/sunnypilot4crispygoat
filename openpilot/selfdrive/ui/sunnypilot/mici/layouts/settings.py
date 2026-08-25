@@ -11,6 +11,10 @@ from openpilot.selfdrive.ui.mici.widgets.button import BigCircleButton
 from openpilot.selfdrive.ui.mici.widgets.dialog import BigConfirmationDialog, BigDialog
 from openpilot.selfdrive.ui.sunnypilot.mici.layouts.sunnylink import SunnylinkLayoutMici
 from openpilot.selfdrive.ui.sunnypilot.mici.layouts.models import ModelsLayoutMici
+from openpilot.selfdrive.ui.sunnypilot.layouts.settings.cruise import CruiseLayout
+from openpilot.selfdrive.ui.sunnypilot.layouts.settings.steering import SteeringLayout
+from openpilot.selfdrive.ui.sunnypilot.layouts.settings.vehicle import VehicleLayout
+from openpilot.selfdrive.ui.sunnypilot.layouts.settings.visuals import VisualsLayout
 from openpilot.selfdrive.ui.ui_state import ui_state
 from openpilot.system.ui.lib.application import gui_app, FontWeight
 from openpilot.system.ui.lib.multilang import tr
@@ -50,6 +54,25 @@ class SettingsLayoutSP(OP.SettingsLayout):
     models_btn = SettingsBigButton(tr("models"), "", gui_app.texture("../../sunnypilot/selfdrive/assets/offroad/icon_models.png", ICON_SIZE, ICON_SIZE))
     models_btn.set_click_callback(lambda: gui_app.push_widget(models_panel))
 
+    # Expose user-facing settings panels on comma four (no longer hidden behind sunnylink).
+    # These push the full sunnypilot panel widgets, designed for the larger TIZI/TICI screen;
+    # they may render slightly dense on mici but are fully functional.
+    vehicle_panel = VehicleLayout()
+    vehicle_btn = SettingsBigButton(tr("vehicle"), "", gui_app.texture("../../sunnypilot/selfdrive/assets/offroad/icon_vehicle.png", ICON_SIZE, ICON_SIZE))
+    vehicle_btn.set_click_callback(lambda: gui_app.push_widget(vehicle_panel))
+
+    cruise_panel = CruiseLayout()
+    cruise_btn = SettingsBigButton(tr("cruise"), "", gui_app.texture("icons/speed_limit.png", ICON_SIZE, ICON_SIZE))
+    cruise_btn.set_click_callback(lambda: gui_app.push_widget(cruise_panel))
+
+    steering_panel = SteeringLayout()
+    steering_btn = SettingsBigButton(tr("steering"), "", gui_app.texture("../../sunnypilot/selfdrive/assets/offroad/icon_lateral.png", ICON_SIZE, ICON_SIZE))
+    steering_btn.set_click_callback(lambda: gui_app.push_widget(steering_panel))
+
+    visuals_panel = VisualsLayout()
+    visuals_btn = SettingsBigButton(tr("visuals"), "", gui_app.texture("../../sunnypilot/selfdrive/assets/offroad/icon_visuals.png", ICON_SIZE, ICON_SIZE))
+    visuals_btn.set_click_callback(lambda: gui_app.push_widget(visuals_panel))
+
     # onroad: enable button sits at the front (left of toggles)
     self._enable_offroad_btn_onroad = BigCircleButton(self.icon_offroad_enable, red=True)
     self._enable_offroad_btn_onroad.set_click_callback(lambda: self._handle_always_offroad(True))
@@ -68,6 +91,14 @@ class SettingsLayoutSP(OP.SettingsLayout):
 
     items.insert(1, models_btn)
     items.insert(5, sunnylink_btn)
+    # crispygoat: expose user-facing panels on comma four (no longer hidden behind sunnylink).
+    # These push the full sunnypilot panel widgets, designed for the larger TIZI/TICI screen;
+    # they may render slightly dense on mici but are fully functional.
+    # Each insert shifts later items, so we use positions that account for prior shifts.
+    items.insert(6, vehicle_btn)
+    items.insert(7, cruise_btn)
+    items.insert(8, steering_btn)
+    items.insert(9, visuals_btn)
 
     # front slots (only one ever visible at a time): exit-always-offroad, then enable-onroad
     items.insert(0, self._enable_offroad_btn_onroad)

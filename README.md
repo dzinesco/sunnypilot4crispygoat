@@ -1,3 +1,21 @@
+<div align="center">
+
+<img src="assets/crispygoat-logo.png" width="160" alt="crispygoat" />
+
+# sunnypilot4crispygoat
+
+**A [sunnypilot](https://github.com/sunnypilot/sunnypilot) fork by [Tyler Martinez](https://github.com/dzinesco) for the 2022 Kia Sorento on comma four.**
+
+Exposes comma-four-hidden settings (Vehicle, Cruise, Steering, Visuals) on-device without sunnylink. Built off sunnypilot upstream `master`; changes live in this repo.
+
+[![Upstream](https://img.shields.io/badge/upstream-sunnypilot-blue)](https://github.com/sunnypilot/sunnypilot)
+[![Fork](https://img.shields.io/badge/fork-dzinesco%2Fsunnypilot4crispygoat-lightgrey)](https://github.com/dzinesco/sunnypilot4crispygoat)
+[![Target](https://img.shields.io/badge/target-2022%20Kia%20Sorento-orange)](https://github.com/commaai/opendbc)
+
+</div>
+
+---
+
 ![](https://user-images.githubusercontent.com/47793918/233812617-beab2e71-57b9-479e-8bff-c3931347ca40.png)
 
 ## 🌞 What is sunnypilot?
