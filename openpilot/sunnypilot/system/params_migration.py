@@ -99,6 +99,43 @@ def _migrate_model_bundle_slots(_params):
     cloudlog.exception(f"Error migrating model bundle slots: {e}")
 
 
+CRISPYGOAT_DEFAULTS_VERSION: str = "1"
+
+
+def _seed_crispygoat_defaults(_params):
+  # Seed recommended settings for a fresh install of sunnypilot4crispygoat on a
+  # Hyundai/Kia/Genesis vehicle with a comma four. Runs once per fresh install;
+  # the version flag survives normal restarts but a factory reset re-triggers it.
+  try:
+    if _params.get("CrispygoatDefaultsSeeded") == CRISPYGOAT_DEFAULTS_VERSION:
+      return
+
+    brand = _resolve_brand(_params)
+    if not brand:
+      # Car not fingerprinted yet; try again next boot.
+      return
+    if brand not in ("hyundai", "kia", "genesis"):
+      # Brand is known and not HKG; mark done so we don't retry forever.
+      _params.put("CrispygoatDefaultsSeeded", CRISPYGOAT_DEFAULTS_VERSION, block=True)
+      return
+
+    # MADS sub-toggles: PAUSE on brake (default is REMAIN_ACTIVE).
+    _params.put("MadsSteeringMode", 1, block=True)
+    # Independent lat/long engagement (default is unified).
+    _params.put("MadsUnifiedEngagementMode", 0, block=True)
+    # Auto Lane Change by Blinker: NUDGELESS (default is NUDGE).
+    _params.put("AutoLaneChangeTimer", 1, block=True)
+    # Lane change BSM delay (default off).
+    _params.put("AutoLaneChangeBsmDelay", 1, block=True)
+    # Custom Longitudinal Tuning: Predictive (default Off).
+    _params.put("HyundaiLongitudinalTuning", 2, block=True)
+
+    _params.put("CrispygoatDefaultsSeeded", CRISPYGOAT_DEFAULTS_VERSION, block=True)
+    cloudlog.info("params_migration: seeded CrispygoatDefaultsV1 (MADS PAUSE, NUDGELESS, BSM delay, Predictive longitudinal)")
+  except Exception as e:
+    cloudlog.exception(f"Error seeding crispygoat defaults: {e}")
+
+
 def run_migration(_params):
   # migrate OnroadScreenOffBrightness
   if _params.get("OnroadScreenOffBrightnessMigrated") != ONROAD_BRIGHTNESS_MIGRATION_VERSION:
@@ -138,3 +175,6 @@ def run_migration(_params):
 
   # seed the usbgpu model slot from the pre-split single slot
   _migrate_model_bundle_slots(_params)
+
+  # seed crispygoat fork defaults on fresh installs (HKG cars)
+  _seed_crispygoat_defaults(_params)
